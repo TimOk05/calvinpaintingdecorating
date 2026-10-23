@@ -1,0 +1,12 @@
+import { readFile, access } from 'node:fs/promises';
+const html = await readFile('index.html','utf8');
+const css = await readFile('styles.css','utf8');
+const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
+if(new Set(ids).size!==ids.length) throw new Error('Duplicate HTML ids');
+for(const [,target] of html.matchAll(/href="#([^"]+)"/g)) if(!ids.includes(target)) throw new Error(`Missing target: ${target}`);
+const references=[...html.matchAll(/(?:src|href)="([^"#]+)"/g)].map(match=>match[1]).filter(value=>!/^https?:/.test(value));
+references.push(...[...css.matchAll(/url\('([^']+)'\)/g)].map(match=>match[1]));
+await Promise.all(references.map(file=>access(file)));
+if((html.match(/<h1\b/g)||[]).length!==1) throw new Error('Expected one primary heading');
+if(!html.includes('noindex, nofollow')) throw new Error('Demo should not be indexed as official company site');
+console.log(`Checked ${references.length} local references, ${ids.length} ids, navigation anchors, and demo metadata.`);

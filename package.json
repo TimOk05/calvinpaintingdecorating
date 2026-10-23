@@ -1,0 +1,12 @@
+{
+  "name": "calvin-painting-decorating-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Independent website design concept for Calvin Painting & Decorating, Manchester.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "check": "node --check app.js && node scripts/check.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}
